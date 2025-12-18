@@ -1,16 +1,22 @@
 version: "3.9"
 
-
 services:
-  speech_api:
+  urban_api:
     build: .
-    ports:
-      - "8000:8000"
     restart: unless-stopped
-    environment:
-      UVICORN_WORKERS: 2
+    expose:
+      - "8000"
+
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/docs" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
       interval: 30s
       timeout: 5s
       retries: 5
+
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - urban_api
