@@ -5,14 +5,12 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from torchvision import transforms
 from PIL import Image
 
-# ---------- CLASSES ----------
 CLASSES = [
     'airplane', 'automobile', 'bird', 'cat', 'deer',
     'dog', 'frog', 'horse', 'ship', 'truck'
 ]
 
-# ---------- MODEL ----------
-class CifarClassifaction(nn.Module):  # имена как в старой модели
+class CifarClassifaction(nn.Module):
     def __init__(self):
         super().__init__()
         self.first = nn.Sequential(
@@ -41,21 +39,18 @@ class CifarClassifaction(nn.Module):  # имена как в старой мод
         return x
 
 
-# ---------- TRANSFORM ----------
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=3),
     transforms.Resize((32, 32)),
     transforms.ToTensor()
 ])
 
-# ---------- LOAD MODEL ----------
 device = torch.device("cpu")
 model = CifarClassifaction()
 
-model.load_state_dict(torch.load("model.pth", map_location=device))
+model.load_state_dict(torch.load("model_cifar10.pth", map_location=device))
 model.eval()
 
-# ---------- APP ----------
 app = FastAPI(title="CIFAR-10 Classifier")
 
 @app.post("/predict")
